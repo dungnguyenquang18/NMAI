@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import tiktoken
 import torch
-from nmai.src.ai.retrive import Retriever
+from retrive import Retriever
 from embeding_model.model import TransformerModel
 from main_model import Chatbot
 
@@ -19,6 +19,7 @@ num_layers = 4
 dropout = 0.1
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = TransformerModel(vocab_size, embed_size, d_model, num_heads, d_ff, num_layers, dropout)
+model.load_state_dict(torch.load('D:/3Y2S/AI/btl/NMAI/best_transformer_encoder_single.pt', map_location=device))
 model.to(device)
 retrieve = Retriever()
 llm = Chatbot()
@@ -38,4 +39,4 @@ def handle_query():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5000)
