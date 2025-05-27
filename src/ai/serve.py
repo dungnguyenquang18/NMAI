@@ -4,6 +4,7 @@ import torch
 from retrive import Retriever
 from embeding_model.model import TransformerModel
 from main_model import Chatbot
+import re
 
 app = Flask(__name__)
 # Khởi tạo tokenizer
@@ -24,6 +25,12 @@ model.to(device)
 retrieve = Retriever()
 llm = Chatbot()
 
+
+def extract_code_block(text):
+    match = re.search(r"```(?:\w*\n)?(.*?)```", text, re.DOTALL)
+    if match:
+        return match.group(1).strip().replace('\n', '')
+
 @app.route('/api/chatbot', methods=['POST'])
 def handle_query():
     data = request.get_json()
@@ -34,8 +41,8 @@ def handle_query():
 
     information = retrieve.retrieve(query, tokenizer, model, k=5, device=device)
     
-    answer = llm.answer(f"hãy viết resume ở ịnh dạng HTML cho tôi từ đoạn thông tin có cấu trúc giống json:\n({query}) \ntừ dữ liệu sau:\n{information}")
-    return jsonify(answer)
+    answer = llm.answer(f"""hãy viết CV ở ịnh dạng HTML cho tôi từ đoạn thông tin có cấu trúc giống json:\n({query}) \ntừ các mẫu CV sau:\n{information}\n """)
+    return jsonify(extract_code_block(answer))
 
 
 if __name__ == '__main__':
