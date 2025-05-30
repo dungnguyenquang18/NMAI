@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học Vấn - AI Sinh CV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Thông Tin Học Vấn</h1>
+        <nav class="nav-menu">
+            <a href="{{ url_for('contact') }}">Liên Hệ</a>
+            <a href="{{ url_for('profile') }}">Hồ Sơ</a>
+            <a href="{{ url_for('education') }}">Học Vấn</a>
+            <a href="{{ url_for('skills') }}">Kỹ Năng</a>
+            <a href="{{ url_for('preview') }}">Hoàn Thiện & Xem Trước</a>
+        </nav>
+        <form method="POST" class="form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label>{{ form.degree.label }}</label>
+                {{ form.degree(class="form-input") }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.year.label }}</label>
+                {{ form.year(class="form-input") }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.school.label }}</label>
+                {{ form.school(class="form-input") }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.city.label }}</label>
+                {{ form.city(class="form-input") }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.address.label }}</label>
+                {{ form.address(class="form-input") }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.major.label }}</label>
+                {{ form.major(class="form-input") }}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="form-submit") }}
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </form>
+        <p class="privacy-notice">Thông tin của bạn được bảo mật và chỉ hiển thị theo cài đặt riêng tư</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ - AI Sinh CV</title>    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>    <div class="container">
+        <h1 class="text-center">Thông Tin Hồ Sơ</h1>
+        <nav class="nav-menu">
+            <a href="{{ url_for('contact') }}">Liên Hệ</a>
+            <a href="{{ url_for('profile') }}">Hồ Sơ</a>
+            <a href="{{ url_for('education') }}">Học Vấn</a>
+            <a href="{{ url_for('skills') }}">Kỹ Năng</a>
+            <a href="{{ url_for('preview') }}">Hoàn Thiện & Xem Trước</a>
+        </nav>
+        
+        <div class="profile-generator">
+            <h2>Tạo Hồ Sơ</h2>
+            <div class="form-group">
+                <label for="num-profiles">Số lượng hồ sơ:</label>
+                <input type="number" id="num-profiles" min="1" max="10" value="1" class="form-input">
+                <button type="button" id="generate-profiles" class="btn">Tạo Form Hồ Sơ</button>
+            </div>
+        </div>
+
+        <div id="profiles-container">
+            <form method="POST" class="form" id="profile-form">
+                {{ form.csrf_token }}
+                
+                <div id="profile-sections">
+                    <div class="profile-section" id="profile-1">
+                        <h3>Hồ sơ #1</h3>
+                        <div class="form-group">
+                            <label>{{ form.title.label }}</label>
+                            {{ form.title(class="form-input") }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.experience.label }}</label>
+                            {{ form.experience(class="form-input") }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.strengths.label }}</label>
+                            {{ form.strengths(class="form-input") }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ form.achievements.label }}</label>
+                            {{ form.achievements(class="form-input") }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn" onclick="addProfile()">Thêm Hồ Sơ</button>
+                    {{ form.submit(class="form-submit") }}
+                </div>
+            </form>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+    const numProfilesInput = document.getElementById('num-profiles');
+    const generateBtn = document.getElementById('generate-profiles');
+    const profileForm = document.getElementById('profile-form');
+    const profilesContainer = document.getElementById('profiles-container');
+                
+                const newSection = document.createElement('div');
+                newSection.className = 'profile-section';
+                newSection.id = `profile-${profileCount}`;
+                
+                const template = `
+                    <div class="profile-header">
+                        <h3>Hồ sơ #${profileCount}</h3>
+                        <button type="button" class="btn-remove" onclick="removeProfile(${profileCount})">Xóa</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Chức Danh Chuyên Môn</label>
+                        <input type="text" name="title_${profileCount}" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kinh Nghiệm, Kỹ Năng</label>
+                        <textarea name="experience_${profileCount}" class="form-input"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Điểm Mạnh</label>
+                        <textarea name="strengths_${profileCount}" class="form-input"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Thành Tựu</label>
+                        <textarea name="achievements_${profileCount}" class="form-input"></textarea>
+                    </div>
+                `;
+                
+                newSection.innerHTML = template;
+                container.appendChild(newSection);
+            }
+
+            function removeProfile(id) {
+                const section = document.getElementById(`profile-${id}`);
+                if (section) {
+                    section.remove();
+                }
+            }
+
+            document.getElementById('profile-form').onsubmit = function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData();
+                const profiles = [];
+                
+                document.querySelectorAll('.profile-section').forEach((section, index) => {
+                    const profileId = section.id.split('-')[1];
+                    const profile = {
+                        title: section.querySelector(`[name^="title"]`).value,
+                        experience: section.querySelector(`[name^="experience"]`).value,
+                        strengths: section.querySelector(`[name^="strengths"]`).value,
+                        achievements: section.querySelector(`[name^="achievements"]`).value
+                    };
+                    profiles.push(profile);
+                });
+                
+                formData.append('profiles', JSON.stringify(profiles));
+                
+                fetch('{{ url_for("profile") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Thông tin hồ sơ đã được lưu thành công!');
+                        location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra khi lưu thông tin!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi lưu thông tin!');
+                });
+            };
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="flash-{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </form>
+        <p class="privacy-notice">Thông tin của bạn được bảo mật và chỉ hiển thị theo cài đặt riêng tư</p>
+    </div>
+</body>
+</html>

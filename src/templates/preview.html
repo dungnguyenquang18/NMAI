@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Trước CV - AI Sinh CV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Xem Trước CV</h1>
+        <nav class="nav-menu">
+            <a href="{{ url_for('contact') }}">Liên Hệ</a>
+            <a href="{{ url_for('profile') }}">Hồ Sơ</a>
+            <a href="{{ url_for('education') }}">Học Vấn</a>
+            <a href="{{ url_for('skills') }}">Kỹ Năng</a>
+            <a href="{{ url_for('preview') }}">Hoàn Thiện & Xem Trước</a>
+        </nav>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% if cv_html %}
+            <div class="cv-preview">
+                {{ cv_html | safe }}
+            </div>
+            <div class="download-section text-center">
+                <a href="{{ url_for('preview', download='pdf') }}" class="download-btn">
+                    <span class="download-icon">📥</span> Tải CV về PDF
+                </a>
+            </div>
+        {% else %}
+            <p class="text-center">Không có CV để hiển thị. Vui lòng điền đầy đủ thông tin.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liên Hệ - AI Sinh CV</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Thông Tin Liên Hệ</h1>
+      <nav class="nav-menu">
+        <a href="{{ url_for('contact') }}">Liên Hệ</a>
+        <a href="{{ url_for('profile') }}">Hồ Sơ</a>
+        <a href="{{ url_for('education') }}">Học Vấn</a>
+        <a href="{{ url_for('skills') }}">Kỹ Năng</a>
+        <a href="{{ url_for('preview') }}">Hoàn Thiện & Xem Trước</a>
+      </nav>
+      <form method="POST" action="{{ url_for('contact') }}" class="form">
+        {{ form.csrf_token }}
+        <div class="form-group">
+          <label>{{ form.full_name.label }}</label>
+          {{ form.full_name(class="form-input") }} {% if form.full_name.errors
+          %} {% for error in form.full_name.errors %}
+          <span class="error">{{ error }}</span>
+          {% endfor %} {% endif %}
+        </div>
+        <div class="form-group">
+          <label>{{ form.phone.label }}</label>
+          {{ form.phone(class="form-input") }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.website.label }}</label>
+          {{ form.website(class="form-input") }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.email.label }}</label>
+          {{ form.email(class="form-input") }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.linkedin.label }}</label>
+          {{ form.linkedin(class="form-input") }}
+        </div>
+        <div class="form-group">{{ form.submit(class="form-submit") }}</div>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <p class="flash-{{ category }}">{{ message }}</p>
+        {% endfor %} {% endif %} {% endwith %}
+      </form>
+      <p class="privacy-notice">
+        Thông tin của bạn được bảo mật và chỉ hiển thị theo cài đặt riêng tư
+      </p>
+    </div>
+  </body>
+</html>
